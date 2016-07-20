@@ -1,36 +1,41 @@
 //Searchbar Handler
-$(function(){
+$(function() {
     var searchField = $('#query');
     var icon = $('#searchButton');
 
+    function init() {
+        searchField.val('tech');
+        icon.click();
+    }
     //Focus event Handler
-    $(searchField).on('focus',function(){
+    $(searchField).on('focus', function() {
         $(this).animate({
             width: '100%'
-        },400);
+        }, 400);
         $(icon).animate({
             right: '10px'
-        },400);
+        }, 400);
     });
 
     //Blur event Handler
-    $(searchField).on('blur',function(){
-        if(searchField.val() == ''){
+    $(searchField).on('blur', function() {
+        if (searchField.val() == '') {
             $(searchField).animate({
                 width: '45%'
-            },400, function(){});
+            }, 400, function() {});
             $(icon).animate({
                 right: '360px'
-            },400, function(){});
+            }, 400, function() {});
         }
     });
 
-    $('#search_form').submit(function(e){
+    $('#search_form').submit(function(e) {
         e.preventDefault();
     });
+    init();
 });
 
-function search(){
+function search() {
     //Clear results
     $('#results').html('');
     $('#buttons').html('');
@@ -40,35 +45,36 @@ function search(){
 
     //Run Get request on API
     $.get(
-        "https://www.googleapis.com/youtube/v3/search",{
+        "https://www.googleapis.com/youtube/v3/search", {
             part: 'snippet, id',
             q: q,
             type: 'video',
-            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'},
-            function(data){
-                var nextPageToken = data.nextPageToken;
-                var prevPageToken = data.prevPageToken;
+            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'
+        },
+        function(data) {
+            var nextPageToken = data.nextPageToken;
+            var prevPageToken = data.prevPageToken;
 
-                console.log(data);
+            console.log(data);
 
-                $.each(data.items, function(i, item){
-                    //Get output
-                    var output = getOutput(item);
+            $.each(data.items, function(i, item) {
+                //Get output
+                var output = getOutput(item);
 
-                    //Display results
-                    $('#results').append(output);
-                });
+                //Display results
+                $('#results').append(output);
+            });
 
-                var buttons = getButtons(prevPageToken,nextPageToken,q);
+            var buttons = getButtons(prevPageToken, nextPageToken, q);
 
-                //Display buttons
-                $('#buttons').append(buttons);
-            }
+            //Display buttons
+            $('#buttons').append(buttons);
+        }
     )
 }
 
 //Next page
-function nextPage(){
+function nextPage() {
     //Next page token
     var token = $('#next-button').data('token');
     var q = $('#next-button').data('query');
@@ -79,36 +85,37 @@ function nextPage(){
 
     //Run Get request on API
     $.get(
-        "https://www.googleapis.com/youtube/v3/search",{
+        "https://www.googleapis.com/youtube/v3/search", {
             part: 'snippet, id',
             q: q,
             pageToken: token,
             type: 'video',
-            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'},
-            function(data){
-                var nextPageToken = data.nextPageToken;
-                var prevPageToken = data.prevPageToken;
+            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'
+        },
+        function(data) {
+            var nextPageToken = data.nextPageToken;
+            var prevPageToken = data.prevPageToken;
 
-                console.log(data);
+            console.log(data);
 
-                $.each(data.items, function(i, item){
-                    //Get output
-                    var output = getOutput(item);
+            $.each(data.items, function(i, item) {
+                //Get output
+                var output = getOutput(item);
 
-                    //Display results
-                    $('#results').append(output);
-                });
+                //Display results
+                $('#results').append(output);
+            });
 
-                var buttons = getButtons(prevPageToken,nextPageToken,q);
+            var buttons = getButtons(prevPageToken, nextPageToken, q);
 
-                //Display buttons
-                $('#buttons').append(buttons);
-            }
+            //Display buttons
+            $('#buttons').append(buttons);
+        }
     );
 }
 
 //Prev page
-function prevPage(){
+function prevPage() {
     //Prev page token
     var token = $('#prev-button').data('token');
     var q = $('#prev-button').data('query');
@@ -119,46 +126,47 @@ function prevPage(){
 
     //Run Get request on API
     $.get(
-        "https://www.googleapis.com/youtube/v3/search",{
+        "https://www.googleapis.com/youtube/v3/search", {
             part: 'snippet, id',
             q: q,
             pageToken: token,
             type: 'video',
-            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'},
-            function(data){
-                var nextPageToken = data.nextPageToken;
-                var prevPageToken = data.prevPageToken;
+            key: 'AIzaSyCbAFKbb-6kDgIYDHba0OOhLYo8cdteNhA'
+        },
+        function(data) {
+            var nextPageToken = data.nextPageToken;
+            var prevPageToken = data.prevPageToken;
 
-                console.log(data);
+            console.log(data);
 
-                $.each(data.items, function(i, item){
-                    //Get output
-                    var output = getOutput(item);
+            $.each(data.items, function(i, item) {
+                //Get output
+                var output = getOutput(item);
 
-                    //Display results
-                    $('#results').append(output);
-                });
+                //Display results
+                $('#results').append(output);
+            });
 
-                var buttons = getButtons(prevPageToken,nextPageToken,q);
+            var buttons = getButtons(prevPageToken, nextPageToken, q);
 
-                //Display buttons
-                $('#buttons').append(buttons);
-            }
+            //Display buttons
+            $('#buttons').append(buttons);
+        }
     );
 }
 
 //Build output
-function getOutput(item){
+function getOutput(item) {
     var videoId = item.id.videoId;
     var title = item.snippet.title;
     var description = item.snippet.description;
     var thumb = item.snippet.thumbnails.high.url;
     var channelTitle = item.snippet.channelTitle;
     var videoDate = item.snippet.publishedAt;
-
-    //Build output string
-    var output =
-    `<li><div class="list-left"><img src="${thumb}">
+    if (videoDate.includes('2016')) {
+        //Build output string
+        var output =
+            `<li><div class="list-left"><img src="${thumb}">
         </div><div class="list-right">
         <h3><a class="fancybox fancybox.iframe" href="http://www.youtube.com/embed/${videoId}">${title}</a></h3>
             <small>By <span class="cTitle">${channelTitle}</span> on ${videoDate}</small>
@@ -166,20 +174,23 @@ function getOutput(item){
         </div>
     </li>
     <div class="clearfix"></div>`;
+        return output;
+    }
 
-    return output;
+
+
 }
 
 //Build buttons
-function getButtons(prevPageToken,nextPageToken,q){
-    if(!prevPageToken){
+function getButtons(prevPageToken, nextPageToken, q) {
+    if (!prevPageToken) {
         var btnoutput =
-        `<div class="button-container">
+            `<div class="button-container">
             <button id="next-button" class="paging-button" data-token="${nextPageToken}" data-query="${q}" onclick="return nextPage()">Next Page</button>
         </div>`;
-    }else {
+    } else {
         var btnoutput =
-        `<div class="button-container">
+            `<div class="button-container">
             <button id="prev-button" class="paging-button" data-token="${prevPageToken}" data-query="${q}" onclick="return prevPage()">Previous Page</button><button id="next-button" class="paging-button" data-token="${nextPageToken}" data-query="${q}" onclick="return nextPage()">Next Page</button>
         </div>`;
     }
